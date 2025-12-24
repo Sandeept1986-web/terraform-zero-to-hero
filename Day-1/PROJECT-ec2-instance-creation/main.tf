@@ -2,7 +2,22 @@ provider "aws" {
     region = "us-east-1"  # Set your desired AWS region
 }
 
+data "aws_ami" "latest_ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical's AWS account ID
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 resource "aws_instance" "example" {
-    ami           = "ami-0c55b159cbfafe1f0"  # Specify an appropriate AMI ID
-    instance_type = "t2.micro"
+    ami           = data.aws_ami.latest_ubuntu.id
+    instance_type = "t3.micro"
 }

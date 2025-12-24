@@ -1,27 +1,27 @@
-resource "aws_vpc" "myvpc" {
+resource "aws_vpc" "sandeepvpc" {
   cidr_block = var.cidr
 }
 
 resource "aws_subnet" "sub1" {
-  vpc_id                  = aws_vpc.myvpc.id
+  vpc_id                  = aws_vpc.sandeepvpc.id
   cidr_block              = "10.0.0.0/24"
   availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "sub2" {
-  vpc_id                  = aws_vpc.myvpc.id
+  vpc_id                  = aws_vpc.sandeepvpc.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = aws_vpc.sandeepvpc.id
 }
 
 resource "aws_route_table" "RT" {
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = aws_vpc.sandeepvpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -41,7 +41,7 @@ resource "aws_route_table_association" "rta2" {
 
 resource "aws_security_group" "webSg" {
   name   = "web"
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = aws_vpc.sandeepvpc.id
 
   ingress {
     description = "HTTP from VPC"
@@ -71,13 +71,13 @@ resource "aws_security_group" "webSg" {
 }
 
 resource "aws_s3_bucket" "example" {
-  bucket = "abhisheksterraform2023project"
+  bucket = "sandeepterraform2026project1"
 }
 
 
 resource "aws_instance" "webserver1" {
   ami                    = "ami-0261755bbcb8c4a84"
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   vpc_security_group_ids = [aws_security_group.webSg.id]
   subnet_id              = aws_subnet.sub1.id
   user_data              = base64encode(file("userdata.sh"))
@@ -85,7 +85,7 @@ resource "aws_instance" "webserver1" {
 
 resource "aws_instance" "webserver2" {
   ami                    = "ami-0261755bbcb8c4a84"
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   vpc_security_group_ids = [aws_security_group.webSg.id]
   subnet_id              = aws_subnet.sub2.id
   user_data              = base64encode(file("userdata1.sh"))
@@ -109,7 +109,7 @@ resource "aws_lb_target_group" "tg" {
   name     = "myTG"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.myvpc.id
+  vpc_id   = aws_vpc.sandeepvpc.id
 
   health_check {
     path = "/"
